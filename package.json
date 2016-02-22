@@ -1,0 +1,29 @@
+{
+  "name": "toodoo",
+  "version": "1.0.0",
+  "description": "To Do app learning React",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keenanzucker/toodoo.git"
+  },
+  "author": "Keenan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/keenanzucker/toodoo/issues"
+  },
+  "homepage": "https://github.com/keenanzucker/toodoo#readme",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "cookie-parser": "^1.4.1",
+    "express": "^4.13.4",
+    "express-handlebars": "^3.0.0",
+    "fs": "0.0.2",
+    "mongoose": "^4.4.4",
+    "morgan": "^1.7.0",
+    "react": "^0.14.7"
+  }
+}
