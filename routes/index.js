@@ -5,20 +5,23 @@ var Noot = require('../models/nootModel');
 var routes = {};
 
 routes.home = function(req, res){
-  Noot.find().sort({time:-1}).exec(function(err, noots){
+  res.render('index', {});
+}
+
+routes.showNoots = function(req, res){
+
+  Noot.find().exec(function(err, noots){
     if (err) console.log(err);
     else {
-      res.render('index', {noots:noots});
-      console.log("Showing da Noots!");
+      res.json(noots);
+      console.log("Noots:" + noots);
     }
   });
 }
 
 routes.newNoot = function(req, res){
 
-  console.log(req.body.text);
   text = req.body.text;
-  author = req.body.author;
 
   var noot = new Noot({
     text: text,
@@ -44,47 +47,5 @@ routes.remove = function(req, res){
     }
   });
 }
-
-
-
-
-// routes.feed = function(req, res){
-
-//   console.log('FROM THE SERVER: ', req.user);
-
-//   Twote.find().sort({time:-1}).exec(function(err, twotes){
-//     if (err) console.log(err);
-//     else {
-//       User.find().sort({time:-1}).exec(function(err, users){
-//         if (err) console.log(err)
-//         else {
-//           res.render('index', {twotes: twotes, users: users, currentUser: req.user});
-//           console.log("Showing Twotes and Users!");
-//           console.log(req.user);
-//         }
-//       });
-//     }
-//   });
-// }
-
-// routes.highlight =function(req, res){
-
-//   clickId = req.body.id;
-
-//   User.findById(clickId, function(err, found){
-//     if (err) console.log(err);
-//     else {
-
-//       console.log('YOU CLICKED ON', found.username);
-//       res.send(found);
-//     }
-//   });
-// }
-
-
-
-
-
-
 
 module.exports = routes;
