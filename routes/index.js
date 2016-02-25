@@ -50,4 +50,29 @@ routes.remove = function(req, res){
   });
 }
 
+routes.toggle = function(req, res){
+
+  console.log(req.body.idToToggle);
+
+  Noot.findOne({_id: req.body.idToToggle}, function(err, val){
+    if (val.done === true){
+      Noot.findByIdAndUpdate(req.body.idToToggle, {done:false}, function(err, val){
+       if (err) console.log(err);
+        else {
+          console.log("Noot with id: " + req.body.idToToggle + " toggled False!");
+          res.json(val);
+        }
+      })
+    } else {
+      Noot.findByIdAndUpdate(req.body.idToToggle, {done:true}, function(err, val){
+       if (err) console.log(err);
+        else {
+          console.log("Noot with id: " + req.body.idToToggle + " toggled True!");
+          res.json(val);
+        }
+      })
+    }
+  });
+}
+
 module.exports = routes;

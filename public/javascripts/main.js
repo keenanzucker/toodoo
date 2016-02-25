@@ -5,22 +5,32 @@ var Noot = React.createClass({
     this.props.handleRemove(this.props.id);
   },
 
+  onToggle: function(){
+    this.props.handleToggle(this.props.id);
+  },
+
   render: function() {
     return (
       <div className="Noot">
         <p>{this.props.text}</p>
+        <input type="checkbox" checked={this.props.done} onChange={this.onToggle} />
         <button className="remove" onClick={this.onRemove}>Remove</button>
       </div>
     );
   }
 });
 
-
 var NootList = React.createClass({
   render: function() {
   	var nootNodes = this.props.data.map(function(noot){
   		return (
-    		<Noot id={noot._id} key={noot._id} text={noot.text} handleRemove={this.props.handleRemove}/> 
+    		<Noot id={noot._id} 
+          key={noot._id} 
+          text={noot.text} 
+          done={noot.done}
+          handleRemove={this.props.handleRemove}
+          handleToggle={this.props.handleToggle}
+        /> 
       );
   	}, this);
 
@@ -82,10 +92,6 @@ var NootApp = React.createClass({
   },
 
    handleNootSubmit: function(noot) {
-   	// var noots = this.state.data;
-   	// console.log(noots);
-    // var newNoots = noots.concat([noot]);
-    // this.setState({data: newNoots});
 
     $.ajax({
       url: '/api/compose',
@@ -109,7 +115,6 @@ var NootApp = React.createClass({
   },
 
   handleRemove: function(nootId){
-
     console.log('removing Noot with id: ' + nootId);
 
     $.ajax({
@@ -117,19 +122,47 @@ var NootApp = React.createClass({
       dataType: 'json',
       type: 'POST',
       data: {idToRemove: nootId},
-      success: function(data) {
+      success: function(data) {  
+
         console.log("From server val:" , data);
-
         var noots = this.state.data;
-
         noots = noots.filter(function(noot){
           return noot._id !== data._id;
         });
-
         this.setState({data:noots});
 
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
 
-        // SPLICE SOMETHING?
+
+  handleToggle: function(nootId){
+    console.log('toggling Noot with id: ' + nootId);
+
+    $.ajax({
+      url: '/api/toggle',
+      dataType: 'json',
+      type: 'POST',
+      data: {idToToggle: nootId},
+      success: function(data){
+        console.log("Toggle Server: " + data);
+        // console.log(this.state.data);
+        // MAKE THE CHANGE TO THE CHECKBOX
+        this.setState({noots: this.state.data.map(function(noot){
+          console.log("NOOT:" + noot._id + "==" + nootId);
+          if (noot._id == nootId){
+            if (noot.done == true){
+              noot.done == false;
+            } else {
+              noot.done == true;
+            }
+          }
+          return noot
+        })});
+
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -152,6 +185,7 @@ var NootApp = React.createClass({
         <NootList
            data={this.state.data}
            handleRemove={this.handleRemove}
+           handleToggle={this.handleToggle}
         />
       </div>
     );
