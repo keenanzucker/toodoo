@@ -1,27 +1,28 @@
+
 var Noot = React.createClass({
 
-rawMarkup: function() {
-    var rawMarkup = marked(this.props.children.toString(), {sanitize: true});
-    return { __html: rawMarkup };
+  onRemove: function() {
+    this.props.handleRemove(this.props.id);
   },
+
   render: function() {
     return (
       <div className="Noot">
-        <span dangerouslySetInnerHTML={this.rawMarkup()}/>
+        <p>{this.props.text}</p>
+        <button className="remove" onClick={this.onRemove}>Remove</button>
       </div>
     );
   }
 });
 
+
 var NootList = React.createClass({
   render: function() {
   	var nootNodes = this.props.data.map(function(noot){
   		return (
-			<Noot key={noot.id}>
-			    {noot.text}
-			</Noot>
-  		);
-  	});
+    		<Noot id={noot._id} key={noot._id} text={noot.text} handleRemove={this.props.handleRemove}/> 
+      );
+  	}, this);
 
   	return (
   		<div className="nootList">
@@ -65,7 +66,7 @@ var NootForm = React.createClass({
   }
 });
 
-var NootBox = React.createClass({
+var NootApp = React.createClass({
   loadNootsFromServer: function() {
     $.ajax({
       url: '/api/noots',
@@ -81,12 +82,10 @@ var NootBox = React.createClass({
   },
 
    handleNootSubmit: function(noot) {
-   	var noots = this.state.data;
-
-   	console.log(noots);
-
-    var newNoots = noots.concat([noot]);
-    this.setState({data: newNoots});
+   	// var noots = this.state.data;
+   	// console.log(noots);
+    // var newNoots = noots.concat([noot]);
+    // this.setState({data: newNoots});
 
     $.ajax({
       url: '/api/compose',
@@ -94,7 +93,13 @@ var NootBox = React.createClass({
       type: 'POST',
       data: noot,
       success: function(data) {
-        this.setState({data: data});
+        console.log("THIS DATA: ", data);
+
+        var noots = this.state.data;
+        console.log(noots);
+        noots.push(data);
+        this.setState({data: noots});
+
       }.bind(this),
       error: function(xhr, status, err) {
       	this.setState({data: noots});
@@ -102,6 +107,36 @@ var NootBox = React.createClass({
       }.bind(this)
     });
   },
+
+  handleRemove: function(nootId){
+
+    console.log('removing Noot with id: ' + nootId);
+
+    $.ajax({
+      url: '/api/remove',
+      dataType: 'json',
+      type: 'POST',
+      data: {idToRemove: nootId},
+      success: function(data) {
+        console.log("From server val:" , data);
+
+        var noots = this.state.data;
+
+        noots = noots.filter(function(noot){
+          return noot._id !== data._id;
+        });
+
+        this.setState({data:noots});
+
+
+        // SPLICE SOMETHING?
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+
   getInitialState: function() {
     return {data: []};
   },
@@ -111,17 +146,20 @@ var NootBox = React.createClass({
   },
   render: function() {
     return (
-      <div className="NootBox">
+      <div className="NootApp">
         <h1>Noots TooDoo</h1>
         <NootForm onNootSubmit={this.handleNootSubmit} />
-        <NootList data={this.state.data} />
+        <NootList
+           data={this.state.data}
+           handleRemove={this.handleRemove}
+        />
       </div>
     );
   }
 });
 
 ReactDOM.render(
-  <NootBox url="/" pollInterval={5000} />,
+  <NootApp url="/" pollInterval={5000} />,
   document.getElementById('content')
 );
 

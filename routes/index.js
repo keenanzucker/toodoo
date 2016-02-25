@@ -14,7 +14,6 @@ routes.showNoots = function(req, res){
     if (err) console.log(err);
     else {
       res.json(noots);
-      console.log("Noots:" + noots);
     }
   });
 }
@@ -25,6 +24,7 @@ routes.newNoot = function(req, res){
 
   var noot = new Noot({
     text: text,
+    done: false
   });
   console.log(noot);
   
@@ -38,12 +38,14 @@ routes.newNoot = function(req, res){
 }
 
 routes.remove = function(req, res){
-  console.log(req.body.idToDelete);
-  Noot.findOne({'_id':req.body.idToDelete}).remove(function(err, val){
+
+  console.log(req.body);
+
+  Noot.findByIdAndRemove(req.body.idToRemove, function(err, val){
     if (err) console.log(err);
     else{
-      console.log("Noot with id " + req.body.idToDelete + " deleted.");
-      res.send(val);
+      console.log("Noot with id " + req.body.idToRemove + " deleted.");
+      res.json(val);
     }
   });
 }

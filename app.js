@@ -23,11 +23,11 @@ app.use(session({ secret: 'wow this is a secret',
     cookie:{}
 }));
 
-
 app.get('/', index.home);
 
 app.get('/api/noots', index.showNoots);
 app.post('/api/compose', index.newNoot);
+app.post('/api/remove', index.remove);
 
 mongoose.connect('mongodb://keenan:olinjs@ds011228.mongolab.com:11228/toodoo', function(err){
 	if(err) console.log(err);
