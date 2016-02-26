@@ -1,23 +1,27 @@
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   padding: 20px;
+  padding-left: 30%;
+  padding-right: 30%;
 }
 
 .NootApp {
 
 	padding: 10%;
 	text-align: center;
+	background-color: #F8BBD0;
 
 }
 
 .NootForm {
 	padding: 10%;
-	background-color: lightblue;
+	background-color: #D81B60;
 	border-radius: 10px;
 }
 
 .NootForm input {
 	border-radius: 3px;
+	background-color: #FCE4EC;
 	box-shadow: none;
 	border: none;
 	padding: 2%;
@@ -25,7 +29,7 @@ body {
 }
 
 .NootForm input[type=submit] {
-	background-color: green;
+	background-color: #880E4F;
 	color: white;
 	font-family: Helvetica;
 }
@@ -34,9 +38,9 @@ body {
 	border-radius: 5px;
 	padding: 2%;
 	margin: 2%;
-	background-color: darkblue;
+	background-color: #AD1457;
 	color: white;
-	width: 15vw;
+	width: 8vw;
 	height: auto;
 	font-size: 16px;
 	font-family: Helvetica;
@@ -44,7 +48,7 @@ body {
 }
 
 .Noot {
-	background-color: lightgrey;
+	background-color: #F48FB1;
 	border-radius: 5px;
 	padding: 2%;
 	margin: 5%;
@@ -54,7 +58,7 @@ body {
 	/*margin-left: 5%;*/
 	float: right;
 	border-radius: 5px;
-	background-color: darkgrey;
+	background-color: #880E4F;
 	color: white;
 	border: none;
 	box-shadow: none;
@@ -63,7 +67,6 @@ body {
 .toggle {
 	width: 18px;
 	height: 18px;
-	background-color: red;
 	float: left;
 
 }
