@@ -9,16 +9,83 @@ var Noot = React.createClass({
     this.props.handleToggle(this.props.id);
   },
 
+  onChange: function(text){
+    this.setState({text: text.target.value});
+  },
+
+  handleBlur: function(){
+    this.sendEdit();
+  },
+
   render: function() {
     return (
       <div className="Noot">
         <input  className="toggle" type="checkbox" checked={this.props.done} onChange={this.onToggle} />
-        <label >{this.props.text}</label>
+        <NootLabel 
+          text={this.props.text} 
+          id={this.props.id} 
+          edit={this.props.edit}
+          handleEdit={this.props.handleEdit}
+        />
         <button className="remove" onClick={this.onRemove}>Remove</button>
       </div>
     );
   }
 });
+
+var NootLabel = React.createClass({
+  getInitialState: function(){
+    return {edit: false, text: this.props.text};
+  },
+
+  onChange: function(text){
+        this.setState({text: text.target.value});
+  },
+
+  handleFocus: function(){
+        this.setState({edit:true});
+  },
+
+  sendEdit: function(){
+        this.props.handleEdit({id: this.props.id, text: this.state.text});
+        this.setState({text: this.props.text, edit: false});
+  },
+
+  handleBlur: function(){
+    this.sendEdit();
+  },
+
+  handleKey: function(key){
+    if( key.charCode == 13 || key.keyCode == 13 ){
+        key.preventDefault();
+        var text = this.state.text;
+        if( !text ){
+            return;
+        }
+        this.sendEdit();
+    }
+  },
+
+  render: function(){
+    if( this.state.edit ){
+            return (
+              <input type='text' 
+                  placeholder={this.props.text} 
+                  value={this.state.text}
+                  onBlur={this.handleBlur}
+                  onChange={this.onChange}
+                  onKeyPress={this.handleKey}
+                  id={this.props.id}
+              />
+            );
+        }
+        return (
+          <label onClick={this.handleFocus}> {this.props.text} </label>
+        );
+  }
+});
+
+
 
 var FilterButton = React.createClass({
 
@@ -47,6 +114,8 @@ var NootList = React.createClass({
           done={noot.done}
           handleRemove={this.props.handleRemove}
           handleToggle={this.props.handleToggle}
+          handleEdit={this.props.handleEdit}
+          edit={noot.edit}
         /> 
 
       );
@@ -191,16 +260,24 @@ var NootApp = React.createClass({
   },
 
   handleEdit: function(noot){
-    console.log("Editting noot with id: " + noot._id);
+    console.log("NOOT: " + noot.text);
+    console.log("Editting noot with id: " + noot.id);
 
+    this.setState({noots: this.state.data.map(function(oldNoot){
+      if(oldNoot._id == noot.id ){
+        oldNoot.text = noot.text;
+      }
+      return oldNoot;
+
+    })});
     $.ajax({
       url: '/api/edit',
       dataType: 'json',
       type: 'POST',
-      data: noot,
+      data: {idToEdit:noot.id, newText: noot.text},
       success: function(data){
 
-        // this.setState({data:noots});
+        this.loadNootsFromServer();
 
       }.bind(this),
       error: function(xhr, status, err) {
@@ -234,6 +311,7 @@ var NootApp = React.createClass({
         <NootList
           handleRemove={this.handleRemove}
           handleToggle={this.handleToggle}
+          handleEdit={this.handleEdit}
           data={this.state.data.filter(function(noot){
 
           switch(this.state.type){
