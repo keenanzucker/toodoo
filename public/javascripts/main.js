@@ -203,21 +203,19 @@ var NootApp = React.createClass({
   handleRemove: function(nootId){
     console.log('removing Noot with id: ' + nootId);
 
+    var noots = this.state.data;
+    noots = noots.filter(function(noot){
+      return nootId !== noot._id;
+    });
+    this.setState({data:noots});
+
     $.ajax({
       url: '/api/remove',
       dataType: 'json',
       type: 'POST',
       data: {idToRemove: nootId},
       success: function(data) {  
-
-        // var noots = this.state.data;
-        // noots = noots.filter(function(noot){
-        //   return noot._id !== data._id;
-        // });
-        // this.setState({data:noots});
-
         this.loadNootsFromServer();
-
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -228,6 +226,22 @@ var NootApp = React.createClass({
   handleToggle: function(nootId){
     console.log('toggling Noot with id: ' + nootId);
 
+    var noots = this.state.data;
+      noots = noots.filter(function(noot){
+        if (noot._id == nootId){
+          if (noot.done == true){
+            console.log("TO FALSE!");
+            noot.done == false;
+          } else {
+            noot.done == true;
+            console.log("TO TRUE!");
+          }
+        }
+        return noot
+      });
+
+    this.setState({data:noots});
+
     $.ajax({
       url: '/api/toggle',
       dataType: 'json',
@@ -235,22 +249,7 @@ var NootApp = React.createClass({
       data: {idToToggle: nootId},
       success: function(data){
 
-        var noots = this.state.data;
-        noots = noots.filter(function(noot){
-          if (noot._id == nootId){
-            if (noot.done == true){
-              console.log("TO FALSE!");
-              noot.done == false;
-            } else {
-              noot.done == true;
-              console.log("TO TRUE!");
-            }
-          }
-          return noot
-        });
-
         this.loadNootsFromServer();
-        // this.setState({data:noots});
 
       }.bind(this),
       error: function(xhr, status, err) {
@@ -339,7 +338,7 @@ var NootApp = React.createClass({
 });
 
 ReactDOM.render(
-  <NootApp url="/" pollInterval={5000} />,
+  <NootApp url="/" pollInterval={2000} />,
   document.getElementById('content')
 );
 
