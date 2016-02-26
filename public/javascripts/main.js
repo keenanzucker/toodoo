@@ -12,8 +12,8 @@ var Noot = React.createClass({
   render: function() {
     return (
       <div className="Noot">
-        <p>{this.props.text}</p>
-        <input type="checkbox" checked={this.props.done} onChange={this.onToggle} />
+        <input  className="toggle" type="checkbox" checked={this.props.done} onChange={this.onToggle} />
+        <label >{this.props.text}</label>
         <button className="remove" onClick={this.onRemove}>Remove</button>
       </div>
     );
@@ -85,7 +85,7 @@ var NootForm = React.createClass({
       <form className="NootForm" onSubmit={this.handleSubmit}>
         <input
           type="text"
-          placeholder="Say something..."
+          placeholder="I have too doo....."
           value={this.state.text}
           onChange={this.handleTextChange}
         />
@@ -111,7 +111,6 @@ var NootApp = React.createClass({
   },
 
    handleNootSubmit: function(noot) {
-
     $.ajax({
       url: '/api/compose',
       dataType: 'json',
@@ -142,11 +141,13 @@ var NootApp = React.createClass({
       data: {idToRemove: nootId},
       success: function(data) {  
 
-        var noots = this.state.data;
-        noots = noots.filter(function(noot){
-          return noot._id !== data._id;
-        });
-        this.setState({data:noots});
+        // var noots = this.state.data;
+        // noots = noots.filter(function(noot){
+        //   return noot._id !== data._id;
+        // });
+        // this.setState({data:noots});
+
+        this.loadNootsFromServer();
 
       }.bind(this),
       error: function(xhr, status, err) {
@@ -154,7 +155,6 @@ var NootApp = React.createClass({
       }.bind(this)
     });
   },
-
 
   handleToggle: function(nootId){
     console.log('toggling Noot with id: ' + nootId);
@@ -165,10 +165,8 @@ var NootApp = React.createClass({
       type: 'POST',
       data: {idToToggle: nootId},
       success: function(data){
-        // MAKE THE CHANGE TO THE CHECKBOX
 
         var noots = this.state.data;
-
         noots = noots.filter(function(noot){
           if (noot._id == nootId){
             if (noot.done == true){
@@ -182,20 +180,8 @@ var NootApp = React.createClass({
           return noot
         });
 
-        this.setState({data:noots});
-
-        // this.setState({noots: this.state.data.map(function(noot){
-        //   if (noot._id == nootId){
-        //     if (noot.done == true){
-        //       console.log("TO FALSE!");
-        //       noot.done == false;
-        //     } else {
-        //       noot.done == true;
-        //       console.log("TO TRUE!");
-        //     }
-        //   }
-        //   return noot
-        // })});
+        this.loadNootsFromServer();
+        // this.setState({data:noots});
 
       }.bind(this),
       error: function(xhr, status, err) {
@@ -204,33 +190,28 @@ var NootApp = React.createClass({
     });
   },
 
+  handleEdit: function(noot){
+    console.log("Editting noot with id: " + noot._id);
+
+    $.ajax({
+      url: '/api/edit',
+      dataType: 'json',
+      type: 'POST',
+      data: noot,
+      success: function(data){
+
+        // this.setState({data:noots});
+
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+
+  },
+
   handleFilter: function(type){
     console.log("TYPE: ",  type);
-
-    // var noots = this.state.data.map(function(noot){
-    //   console.log(noot.done);
-    //   switch(type){
-    //     case 'all':
-    //       console.log('SHOWING ALL!');
-    //       return noot;
-    //       break;
-    //     case 'active': 
-    //       if(!noot.done){
-    //         console.log("THIS ONE ACTIVE!");
-    //         return noot;
-    //       }
-    //       break;
-    //     case 'done':
-    //       if(noot.done){
-    //         console.log("THIS ONE DONE!");
-    //         return noot;
-    //       }
-    //       break;
-    //     default:
-    //       console.log("DEFUALT!");
-    //       return noot;        
-    //   }
-    // });
     this.setState({type: type});
   },
 
@@ -251,33 +232,28 @@ var NootApp = React.createClass({
         <FilterButton handleFilter={this.handleFilter} type="done" /> 
 
         <NootList
-           data={this.state.data.filter(function(noot){
+          handleRemove={this.handleRemove}
+          handleToggle={this.handleToggle}
+          data={this.state.data.filter(function(noot){
 
           switch(this.state.type){
             case 'all':
-              console.log('SHOWING ALL!');
               return noot;
               break;
             case 'active': 
               if(!noot.done){
-                console.log("THIS ONE ACTIVE!");
                 return noot;
               }
               break;
             case 'done':
               if(noot.done){
-                console.log("THIS ONE DONE!");
                 return noot;
               }
               break;
             default:
-              console.log("DEFUALT!");
               return noot;        
           }
            }.bind(this))}
-
-           handleRemove={this.handleRemove}
-           handleToggle={this.handleToggle}
         />
       </div>
     );
@@ -286,8 +262,6 @@ var NootApp = React.createClass({
 
 ReactDOM.render(
   <NootApp url="/" pollInterval={5000} />,
-  // <NootApp url="/"/>,
-
   document.getElementById('content')
 );
 

@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var session = require('express-session');
 var index = require('./routes/index');
 
+
 var app = express();
 var COMMENTS_FILE = path.join(__dirname, 'comments.json');
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
@@ -29,6 +30,7 @@ app.get('/api/noots', index.showNoots);
 app.post('/api/compose', index.newNoot);
 app.post('/api/remove', index.remove);
 app.post('/api/toggle', index.toggle);
+app.post('/api/edit', index.edit);
 
 mongoose.connect('mongodb://keenan:olinjs@ds011228.mongolab.com:11228/toodoo', function(err){
 	if(err) console.log(err);

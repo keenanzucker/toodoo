@@ -2,3 +2,69 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   padding: 20px;
 }
+
+.NootApp {
+
+	padding: 10%;
+	text-align: center;
+
+}
+
+.NootForm {
+	padding: 10%;
+	background-color: lightblue;
+	border-radius: 10px;
+}
+
+.NootForm input {
+	border-radius: 3px;
+	box-shadow: none;
+	border: none;
+	padding: 2%;
+	margin: 2%;
+}
+
+.NootForm input[type=submit] {
+	background-color: green;
+	color: white;
+	font-family: Helvetica;
+}
+
+.FilterButton {
+	border-radius: 5px;
+	padding: 2%;
+	margin: 2%;
+	background-color: darkblue;
+	color: white;
+	width: 15vw;
+	height: auto;
+	font-size: 16px;
+	font-family: Helvetica;
+	border: none;
+}
+
+.Noot {
+	background-color: lightgrey;
+	border-radius: 5px;
+	padding: 2%;
+	margin: 5%;
+}
+
+.remove {
+	/*margin-left: 5%;*/
+	float: right;
+	border-radius: 5px;
+	background-color: darkgrey;
+	color: white;
+	border: none;
+	box-shadow: none;
+}
+
+.toggle {
+	width: 18px;
+	height: 18px;
+	background-color: red;
+	float: left;
+
+}
+

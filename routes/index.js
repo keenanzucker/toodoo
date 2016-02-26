@@ -75,4 +75,18 @@ routes.toggle = function(req, res){
   });
 }
 
+routes.edit = function(req, res){
+
+  console.log("EDIT: " + req.body.newText + " of " + req.body.idToEdit);
+
+  Noot.findByIdAndUpdate(req.body.idToEdit, {text: req.body.newText}, function(err, val){
+    if (err) console.log(err);
+    else {
+      console.log("EDITTED!");
+      res.json(val);
+    }
+  })
+
+}
+
 module.exports = routes;
